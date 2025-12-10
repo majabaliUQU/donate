@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طباعة ونشر المصاحف</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        /* Custom styles for checkbox appearance */
+        .checkbox-wrapper input:checked + div {
+            opacity: 1;
+        }
+        /* Hide scrollbar for clean UI in inputs */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        /* Custom Checkbox Style for the bottom options */
+        .custom-checkbox {
+            appearance: none;
+            background-color: #fff;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.25em;
+            height: 1.25em;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25em;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+        }
+        .custom-checkbox::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #108354;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        .custom-checkbox:checked::before {
+            transform: scale(1);
+        }
+        .custom-checkbox:checked {
+            border-color: #108354;
+        }
+
+        /* Sparkline Animation */
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .sparkline-container {
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+        .animate-scroll {
+            animation: scroll-left 4s linear infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[#F8F9FA] font-sans text-gray-800 pb-12">
+
+    <!-- Header / Stepper -->
+    <div class="flex justify-center items-center py-8">
+        <div class="flex items-center gap-4 relative w-64 justify-center">
+            <!-- Connecting Line -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-[2px] bg-gray-200 -z-10"></div>
+            
+            <!-- Step 1 (Active) -->
+            <div class="flex flex-col items-center gap-2 z-10">
+                <div class="w-8 h-8 rounded-full bg-[#108354] text-white flex items-center justify-center font-bold text-sm ring-4 ring-green-50">
+                    1
+                </div>
+                <span class="text-[#108354] font-bold text-sm">التفاصيل</span>
+            </div>
+
+            <!-- Step 2 (Inactive) -->
+            <div class="flex flex-col items-center gap-2 z-10">
+                <div class="w-8 h-8 rounded-full bg-white border-2 border-gray-200 text-gray-400 flex items-center justify-center font-bold text-sm">
+                    2
+                </div>
+                <span class="text-gray-400 font-bold text-sm">الدفع</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 md:px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- RIGHT COLUMN (Main Details) -->
+            <div class="lg:col-span-7 space-y-6">
+                <!-- Main Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-gray-900">التفاصيل</h2>
+                        </div>
+
+                        <!-- Hero Image Section (Modified for Goal Gradient Effect) -->
+                        <div class="relative rounded-2xl overflow-hidden mb-6 group">
+                            <img 
+                                src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?q=80&w=2070&auto=format&fit=crop" 
+                                alt="Quran" 
+                                class="w-full h-64 object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
+                            />
+                            
+                            <!-- Persuasive Text Overlay -->
+                            <div class="absolute bottom-10 right-0 left-0 flex justify-center pb-2 z-10">
+                                <span class="bg-white/95 backdrop-blur-sm text-gray-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-orange-100 flex items-center gap-1.5 animate-pulse">
+                                    <i data-lucide="flame" class="w-3.5 h-3.5 fill-orange-500 text-orange-600"></i>
+                                    <span class="text-gray-900">تبقى القليل لاكتمال الوقف! كن أنت من يغلق السهم الأخير</span>
+                                </span>
+                            </div>
+
+                            <!-- Progress Bar Overlay -->
+                            <div class="absolute bottom-0 left-0 right-0 h-8 bg-orange-200">
+                                <div class="h-full bg-[#108354] flex items-center justify-end px-3 shadow-sm relative" style="width: 83%">
+                                    <!-- Shine effect -->
+                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                                    <span class="text-white text-xs font-bold relative z-10">83%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Title and Share -->
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-900 mb-2">طباعة ونشر المصاحف</h1>
+                                <p class="text-gray-500 text-sm">رقم الحالة : P61465</p>
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                                <i data-lucide="share-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+
+                        <!-- Description -->
+                        <p class="text-gray-600 leading-relaxed text-sm mb-8 text-justify">
+                            يسعى هذا المشروع إلى طباعة المصحف الشريف وتوزيعه على المسلمين، ساهم بتبرعك لتعينهم على قراءة القرآن الكريم وتدبر معانيه، ليكون لك بكل حرف يتلى أجر وثواب، قال رسول الله -صلى الله عليه وسلم-: "إِذَا مَاتَ ابنُ آدم انْقَطَعَ عَنْهُ عَمَلُهُ إِلَّا مِنْ ثَلَاثٍ: صَدَقَةٍ جَارِيَةٍ، أو عِلْمٍ يُنْتَفَعُ بِهِ، أو وَلَدٍ صَالِحٍ يَدْعُو لَهُ".
+                        </p>
+
+                        <!-- Donation Stats Row 1 (Visualized) -->
+                        <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                            <div class="flex justify-between items-center">
+                                <!-- Collected Section -->
+                                <div class="text-center w-1/2 border-l border-gray-200 flex flex-col justify-center h-28">
+                                    <p class="text-[#108354] text-xs font-bold mb-2">تم جمع</p>
+                                    <p class="text-gray-900 font-bold text-2xl">1,708,050</p>
+                                    <span class="text-xs font-medium text-gray-500 mt-1">ر.س</span>
+                                </div>
+                                
+                                <!-- Painful Gap Visualization (Donut Chart) -->
+                                <div class="w-1/2 flex flex-col items-center justify-center relative">
+                                    <div class="relative w-24 h-24">
+                                        <!-- SVG Chart -->
+                                        <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90 drop-shadow-sm">
+                                            <!-- Completed Part (Green) - 83% -->
+                                            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#dcfce7" stroke-width="3" />
+                                            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#108354" stroke-width="3" stroke-dasharray="83, 100" stroke-linecap="round" />
+                                            
+                                            <!-- Remaining Part (Orange Warning) - 17% -->
+                                            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#f97316" stroke-width="3" stroke-dasharray="17, 100" stroke-dashoffset="-83" stroke-linecap="round" class="animate-[pulse_3s_infinite]" />
+                                        </svg>
+                                        
+                                        <!-- Message Inside -->
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                            <span class="text-[9px] font-bold text-gray-400 leading-none mb-0.5">متبقي</span>
+                                            <span class="text-[10px] font-extrabold text-orange-600 leading-tight">أغلق<br>الدائرة<br>الآن</span>
+                                        </div>
+                                    </div>
+                                    <!-- Small Amount Text below chart -->
+                                    <p class="text-[10px] text-gray-500 font-medium mt-1">361,950 ر.س</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Row 2 -->
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <div class="flex justify-between items-center text-center">
+                                <div class="flex-1">
+                                    <p class="text-[#108354] text-xs font-bold mb-1">عدد المستفيدين</p>
+                                    <p class="text-gray-900 font-bold">90000 مستفيد</p>
+                                </div>
+                                <div class="flex-1 border-r border-gray-200 border-l px-2">
+                                    <p class="text-[#108354] text-xs font-bold mb-1">نوع المستفيد</p>
+                                    <p class="text-gray-900 font-bold text-sm leading-tight">المواطنون والمقيمون بالمملكة</p>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-[#108354] text-xs font-bold mb-1">المدينة</p>
+                                    <p class="text-gray-900 font-bold">المدينة المنورة</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Executor Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 text-right">الشريك المنفذ</h3>
+                    <div class="flex items-center justify-between bg-gray-50 rounded-xl p-4">
+                        <span class="text-gray-700 font-medium text-sm">مجمع الملك فهد لطباعة المصحف الشريف بالمدينة المنورة</span>
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 p-1">
+                            <div class="w-full h-full rounded-full bg-green-50 flex items-center justify-center text-[#108354]">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/KfgqPC_logo.png/180px-KfgqPC_logo.png" alt="Logo" class="w-8 h-8 object-contain" onError="this.style.display='none'">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="text-gray-500 text-xs mt-3 hover:text-[#108354] transition-colors">عرض التفاصيل</button>
+                </div>
+            </div>
+
+            <!-- LEFT COLUMN (Donation Panel) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- Donation Box -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 transition-all duration-300">
+                    
+                    <!-- Top Toggle: Gift Checkbox -->
+                    <div class="flex items-center justify-between mb-8 cursor-pointer select-none group" onclick="toggleGiftMode()">
+                        <div class="flex items-center gap-3">
+                             <!-- Checkbox -->
+                            <div class="relative w-6 h-6 flex items-center justify-center">
+                                <input type="checkbox" id="gift" class="peer appearance-none w-6 h-6 border-[1.5px] border-gray-400 rounded-[4px] bg-white checked:bg-[#108354] checked:border-[#108354] transition-all cursor-pointer" />
+                                <i data-lucide="check" class="absolute text-white w-4 h-4 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none stroke-[3]"></i>
+                            </div>
+                            <!-- Label -->
+                            <label for="gift" id="gift-label" class="cursor-pointer font-bold text-gray-900 text-base pointer-events-none transition-colors duration-200">تبرع عن أهلك أو أصدقائك وشاركهم الأجر</label>
+                        </div>
+                        <!-- Icon -->
+                        <i data-lucide="gift" id="gift-icon" class="text-gray-400 w-6 h-6 stroke-[1.5] transition-colors duration-200"></i>
+                    </div>
+
+                    <!-- STANDARD VIEW -->
+                    <div id="standard-view">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">مبلغ التبرع</h3>
+                        
+                        <!-- Quick Amount Buttons -->
+                        <div class="grid grid-cols-3 gap-3 mb-4">
+                            <!-- Productized Option 1 -->
+                            <button onclick="handleAmountClick(10, this)" class="amount-btn flex flex-col items-center justify-center gap-1 py-4 h-auto rounded-xl border border-gray-200 text-gray-700 transition-all hover:border-gray-300 hover:shadow-sm">
+                                <span class="text-xs font-semibold text-gray-500">مصحف كامل</span>
+                                <span class="text-lg font-bold text-[#108354]">10 ر.س</span>
+                            </button>
+                            <!-- Productized Option 2 (Default Anchoring) -->
+                            <button id="default-amount-btn" onclick="handleAmountClick(50, this)" class="amount-btn flex flex-col items-center justify-center gap-1 py-4 h-auto rounded-xl border border-gray-200 text-gray-700 transition-all hover:border-gray-300 hover:shadow-sm">
+                                <span class="text-xs font-semibold text-gray-500">5 مصاحف</span>
+                                <span class="text-lg font-bold text-[#108354]">50 ر.س</span>
+                            </button>
+                            <!-- Productized Option 3 -->
+                            <button onclick="handleAmountClick(100, this)" class="amount-btn flex flex-col items-center justify-center gap-1 py-4 h-auto rounded-xl border border-gray-200 text-gray-700 transition-all hover:border-gray-300 hover:shadow-sm">
+                                <span class="text-xs font-semibold text-gray-500">10 مصاحف</span>
+                                <span class="text-lg font-bold text-[#108354]">100 ر.س</span>
+                            </button>
+                        </div>
+
+                        <!-- Custom Input -->
+                        <div class="relative mb-6">
+                            <input
+                                type="number"
+                                id="custom-amount-standard"
+                                placeholder="أو أدخل مبلغ آخر"
+                                oninput="handleCustomAmountChange(this)"
+                                class="w-full border border-gray-200 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#108354] focus:border-transparent text-gray-700 placeholder-gray-400"
+                            />
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">ر.س</span>
+                        </div>
+
+                        <!-- Recurring Donation Toggle (Sustainability) -->
+                        <div class="flex items-center justify-between bg-green-50/50 p-3 rounded-xl border border-green-100 mb-2">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-gray-900">اجعلها صدقة شهرية؟</span>
+                                <span class="text-[10px] text-gray-500 mt-0.5">يستمر الاستقطاع شهرياً حتى اكتمال المبلغ</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#108354]"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- GIFT VIEW (Hidden by default) -->
+                    <div id="gift-view" class="hidden space-y-5">
+                        
+                        <!-- Sender Info -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 mb-2">المرسل <span class="text-red-500">*</span></label>
+                                <input type="text" placeholder="اسمك" class="w-full border border-gray-300 rounded-md py-2.5 px-3 text-sm focus:outline-none focus:border-[#108354] focus:ring-1 focus:ring-[#108354] placeholder-gray-400 text-right">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-gray-800 mb-2">رقم الجوال <span class="text-red-500">*</span></label>
+                                <div class="flex flex-row-reverse border border-gray-300 rounded-md overflow-hidden focus-within:ring-1 focus-within:ring-[#108354] focus-within:border-[#108354]">
+                                    <div class="bg-white px-2 flex items-center min-w-[90px] justify-center gap-2" dir="ltr">
+                                        <img src="https://flagcdn.com/w20/sa.png" width="20" alt="SA">
+                                        <span class="text-sm text-gray-600 font-sans">+966</span>
+                                        <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i>
+                                    </div>
+                                    <div class="w-[1px] bg-gray-200 my-1"></div>
+                                    <input type="tel" placeholder="5xxxxxxxx" class="flex-1 py-2.5 px-3 text-sm focus:outline-none text-right placeholder-gray-400 font-sans" dir="ltr">
+                                </div>
+                            </div>
+
+                            <button class="w-full bg-[#408C65] hover:bg-[#347553] text-white font-bold py-3 rounded-md text-sm transition-colors shadow-sm mt-2">
+                                إرسال رمز التحقق
+                            </button>
+                        </div>
+
+                        <!-- Recipient Card Container -->
+                        <div class="relative bg-[#F8F9FA] rounded-xl border border-gray-100 p-4 pt-8 mt-2">
+                            <button class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+
+                            <div class="space-y-4 mb-5">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-800 mb-2">المرسل اليه <span class="text-red-500">*</span></label>
+                                    <input type="text" placeholder="اسم المتبرع عنه" class="w-full bg-white border border-gray-300 rounded-md py-2.5 px-3 text-sm focus:outline-none focus:border-[#108354] focus:ring-1 focus:ring-[#108354] placeholder-gray-500 text-right">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-800 mb-2">رقم الجوال <span class="text-red-500">*</span></label>
+                                    <div class="flex flex-row-reverse border border-gray-300 rounded-md overflow-hidden bg-white focus-within:ring-1 focus-within:ring-[#108354] focus-within:border-[#108354]">
+                                        <div class="bg-white px-2 flex items-center min-w-[90px] justify-center gap-2" dir="ltr">
+                                            <img src="https://flagcdn.com/w20/sa.png" width="20" alt="SA">
+                                            <span class="text-sm text-gray-600 font-sans">+966</span>
+                                            <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i>
+                                        </div>
+                                        <div class="w-[1px] bg-gray-200 my-1"></div>
+                                        <input type="tel" placeholder="5xxxxxxxx" class="flex-1 py-2.5 px-3 text-sm focus:outline-none text-right placeholder-gray-400 font-sans" dir="ltr">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Amount inside card -->
+                            <div class="mb-1">
+                                <label class="block text-sm font-bold text-gray-800 mb-2">مبلغ التبرع</label>
+                                <div class="grid grid-cols-3 gap-3 mb-3">
+                                    <button onclick="handleAmountClick(10, this)" class="amount-btn flex flex-col items-center justify-center py-2 bg-white rounded-md border border-gray-200 text-gray-700 transition-all hover:border-gray-300">
+                                        <span class="text-[10px] font-medium text-gray-500">مصحف</span>
+                                        <span class="text-sm font-bold text-[#108354]">10 ر.س</span>
+                                    </button>
+                                    <button onclick="handleAmountClick(50, this)" class="amount-btn flex flex-col items-center justify-center py-2 bg-white rounded-md border border-gray-200 text-gray-700 transition-all hover:border-gray-300">
+                                        <span class="text-[10px] font-medium text-gray-500">5 مصاحف</span>
+                                        <span class="text-sm font-bold text-[#108354]">50 ر.س</span>
+                                    </button>
+                                    <button onclick="handleAmountClick(100, this)" class="amount-btn flex flex-col items-center justify-center py-2 bg-white rounded-md border border-gray-200 text-gray-700 transition-all hover:border-gray-300">
+                                        <span class="text-[10px] font-medium text-gray-500">10 مصاحف</span>
+                                        <span class="text-sm font-bold text-[#108354]">100 ر.س</span>
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <input
+                                        type="number"
+                                        placeholder="مبلغ اخر"
+                                        oninput="handleCustomAmountChange(this)"
+                                        class="w-full bg-white border border-gray-200 rounded-md py-2.5 px-10 text-sm focus:outline-none focus:ring-1 focus:ring-[#108354] focus:border-[#108354] text-gray-700 placeholder-gray-500 text-right"
+                                    />
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-bold">ر.س</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Another Person Button -->
+                        <button class="w-full border border-gray-200 hover:border-[#108354] hover:text-[#108354] text-gray-800 font-bold py-2.5 rounded-md flex items-center justify-center gap-2 transition-colors bg-white shadow-sm mt-4">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                            <span>تبرع عن شخص آخر</span>
+                        </button>
+
+                        <!-- Extra Options -->
+                        <div class="pt-6 mt-2">
+                            <h4 class="font-bold text-sm text-gray-900 mb-4 text-right">حدد ما تود إظهاره برسالة التبرع:</h4>
+                            <div class="flex items-center justify-between">
+                                <div class="flex gap-6">
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" id="show-amount" class="custom-checkbox">
+                                        <label for="show-amount" class="text-sm text-gray-700 cursor-pointer select-none font-medium">إظهار مبلغ التبرع</label>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <input type="checkbox" id="show-project" class="custom-checkbox">
+                                        <label for="show-project" class="text-sm text-gray-700 cursor-pointer select-none font-medium">إظهار اسم المشروع</label>
+                                    </div>
+                                </div>
+                                <button class="flex items-center gap-2 text-sm text-gray-900 font-bold hover:text-[#108354]">
+                                    <i data-lucide="eye" class="w-5 h-5"></i>
+                                    معاينة الرسالة
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Action Buttons (Shared) -->
+                    <div class="flex gap-3 mt-6 pt-6 border-t border-gray-100">
+                        <button class="w-12 h-12 flex items-center justify-center border border-gray-200 rounded-lg text-gray-400 hover:bg-gray-50 transition-colors">
+                            <i data-lucide="shopping-cart" class="w-6 h-6 stroke-[1.5]"></i>
+                        </button>
+                        <button class="flex-1 bg-gray-100 text-gray-400 font-bold rounded-lg py-3 hover:bg-[#108354] hover:text-white transition-all duration-300">
+                            تبرع الآن
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Grid (2x2) -->
+                <div class="grid grid-cols-2 gap-4">
+                    
+                    <!-- Card 1: Visits -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col justify-between h-full relative overflow-hidden group hover:shadow-md transition-shadow">
+                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-green-500 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[#108354] text-xs font-bold">الزيارات</span>
+                            <div class="p-2 bg-green-50 rounded-full text-[#108354]">
+                                <i data-lucide="eye" class="w-[18px] h-[18px]"></i>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-xl font-bold text-gray-900">119874</span>
+                            <span class="text-xs text-gray-500 mr-1">زيارة</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Last Donation (Sparkline Added) -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col justify-between h-full relative overflow-hidden group hover:shadow-md transition-shadow">
+                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-green-500 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[#108354] text-xs font-bold">آخر عملية تبرع قبل</span>
+                            <div class="p-2 bg-green-50 rounded-full text-[#108354]">
+                                <i data-lucide="clock" class="w-[18px] h-[18px]"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center relative z-10">
+                            <span class="text-xl font-bold text-gray-900">3</span>
+                            <span class="text-xs text-gray-500 mr-1">ثانية</span>
+                        </div>
+
+                        <!-- Sparkline Visualization -->
+                        <div class="absolute bottom-0 left-0 right-0 h-10 sparkline-container opacity-40">
+                            <div class="w-[200%] h-full flex animate-scroll">
+                                <svg class="w-1/2 h-full text-[#108354]" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <path d="M0 15 Q 10 15, 15 15 T 20 15 T 25 5 T 30 18 T 35 15 T 45 15 T 50 8 T 55 15 T 70 15 T 75 10 T 80 15 T 100 15" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+                                </svg>
+                                <svg class="w-1/2 h-full text-[#108354]" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                    <path d="M0 15 Q 10 15, 15 15 T 20 15 T 25 5 T 30 18 T 35 15 T 45 15 T 50 8 T 55 15 T 70 15 T 75 10 T 80 15 T 100 15" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Beneficiaries (Humanized) -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between h-full relative overflow-hidden group hover:shadow-md transition-shadow">
+                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-green-500 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[#108354] text-xs font-bold">حالة المستفيدين</span>
+                            <div class="p-1.5 bg-green-50 rounded-full text-[#108354]">
+                                <i data-lucide="users" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Isotype Viz -->
+                        <div class="flex justify-center gap-1 mb-2" dir="ltr">
+                            <!-- 8 Green -->
+                            <i data-lucide="user" class="w-4 h-4 text-[#108354] fill-[#108354]"></i>
+                            <i data-lucide="user" class="w-4 h-4 text-[#108354] fill-[#108354]"></i>
+                            <i data-lucide="user" class="w-4 h-4 text-[#108354] fill-[#108354]"></i>
+                            <i data-lucide="user" class="w-4 h-4 text-[#108354] fill-[#108354]"></i>
+                            <i data-lucide="user" class="w-4 h-4 text-[#108354] fill-[#108354]"></i>
+                            <i data-lucide="user" class="w-4 h-4 text-[#108354] fill-[#108354]"></i>
+                            <i data-lucide="user" class="w-4 h-4 text-[#108354] fill-[#108354]"></i>
+                            <i data-lucide="user" class="w-4 h-4 text-[#108354] fill-[#108354]"></i>
+                            <!-- 2 Gray -->
+                            <i data-lucide="user" class="w-4 h-4 text-gray-300 fill-gray-200"></i>
+                            <i data-lucide="user" class="w-4 h-4 text-gray-300 fill-gray-200"></i>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="text-[10px] text-gray-600 font-medium leading-tight">
+                                <span class="font-bold text-[#108354]">8 من 10</span> أشخاص استلموا مصاحفهم، <br> ساهم في الوصول للبقية.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Donation Count -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col justify-between h-full relative overflow-hidden group hover:shadow-md transition-shadow">
+                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-green-500 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-[#108354] text-xs font-bold">عدد عمليات التبرع</span>
+                            <div class="p-2 bg-green-50 rounded-full text-[#108354]">
+                                <i data-lucide="hand-coins" class="w-[18px] h-[18px]"></i>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-xl font-bold text-gray-900">145,503</span>
+                            <span class="text-xs text-gray-500 mr-1">عملية</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Live Social Proof Ticker -->
+    <div id="social-proof-toast" class="fixed bottom-4 left-4 z-50 transform transition-all duration-500 translate-y-20 opacity-0 pointer-events-none">
+        <div class="bg-white/95 backdrop-blur-md border border-green-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-xl p-3 flex items-center gap-3 pr-4 pl-6 min-w-[280px]">
+            <div class="bg-green-50 p-2 rounded-full flex-shrink-0 relative">
+                <div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+                <div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full"></div>
+                <i data-lucide="heart" class="w-4 h-4 text-[#108354] fill-[#108354]"></i>
+            </div>
+            <div>
+                 <p class="text-sm font-bold text-gray-800 line-clamp-1" id="toast-message">جاري تحميل التبرعات...</p>
+                 <p class="text-[10px] text-gray-400 font-medium">الآن</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- Live Social Proof Ticker Logic ---
+        const recentDonations = [
+            "فهد من الرياض تبرع بـ 50 ريال الآن",
+            "فاعل خير ساهم بـ 5 مصاحف قبل قليل",
+            "أمل من جدة تبرعت بـ 100 ريال",
+            "عبدالله ساهم في وقف المصاحف",
+            "مريم تبرعت عن والديها بـ 10 مصاحف",
+            "فاعل خير من الدمام تبرع بـ 200 ريال",
+            "سارة ساهمت في طباعة المصحف",
+            "محمد من القصيم تبرع بمصحف كامل"
+        ];
+
+        function startSocialProofTicker() {
+            const toast = document.getElementById('social-proof-toast');
+            const messageEl = document.getElementById('toast-message');
+            
+            function showToast() {
+                // Pick random message
+                const msg = recentDonations[Math.floor(Math.random() * recentDonations.length)];
+                messageEl.textContent = msg;
+                
+                // Show
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                
+                // Hide after 4 seconds
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 4000);
+                
+                // Schedule next one (random 5-10 seconds)
+                setTimeout(showToast, Math.random() * (10000 - 5000) + 5000);
+            }
+            
+            // Start after a slight delay
+            setTimeout(showToast, 1500);
+        }
+
+        // Start Ticker
+        startSocialProofTicker();
+        // ------------------------------------
+
+        // Toggle Gift View
+        function toggleGiftMode() {
+            const checkbox = document.getElementById('gift');
+            const label = document.getElementById('gift-label');
+            const icon = document.getElementById('gift-icon');
+            const standardView = document.getElementById('standard-view');
+            const giftView = document.getElementById('gift-view');
+            
+            // Sync click if text was clicked (prevent double toggle if checkbox itself is clicked)
+            if(event.target.tagName !== 'INPUT') {
+                 checkbox.checked = !checkbox.checked;
+            }
+
+            if(checkbox.checked) {
+                // Enabled state styling
+                label.classList.remove('text-gray-900');
+                label.classList.add('text-[#108354]');
+                icon.classList.remove('text-gray-400');
+                icon.classList.add('text-[#108354]');
+                
+                // Switch Views
+                standardView.classList.add('hidden');
+                giftView.classList.remove('hidden');
+            } else {
+                // Disabled state styling
+                label.classList.remove('text-[#108354]');
+                label.classList.add('text-gray-900');
+                icon.classList.remove('text-[#108354]');
+                icon.classList.add('text-gray-400');
+
+                // Switch Views
+                standardView.classList.remove('hidden');
+                giftView.classList.add('hidden');
+            }
+        }
+
+        // Amount Selection Logic
+        let selectedAmount = null;
+
+        function handleAmountClick(amount, btnElement) {
+            selectedAmount = amount;
+            
+            // Find container of clicked button (to support both views separately)
+            const container = btnElement.closest('.grid');
+            const customInput = container.nextElementSibling.querySelector('input');
+            
+            // Clear custom input in this context
+            if(customInput) customInput.value = '';
+
+            // Reset buttons in this specific container
+            const buttons = container.querySelectorAll('.amount-btn');
+            buttons.forEach(btn => {
+                // Reset styles - Keeping flex structure in mind
+                btn.classList.remove('border-[#108354]', 'bg-green-50', 'ring-1', 'ring-[#108354]');
+                btn.classList.add('border-gray-200', 'bg-white');
+                
+                // Find inner text elements to reset colors
+                const labels = btn.querySelectorAll('span');
+                if(labels.length > 0) {
+                     labels[0].classList.remove('text-[#108354]');
+                     labels[0].classList.add('text-gray-500');
+                }
+            });
+
+            // Set active style
+            btnElement.classList.remove('border-gray-200', 'bg-white');
+            btnElement.classList.add('border-[#108354]', 'bg-green-50', 'ring-1', 'ring-[#108354]');
+            
+            // Highlight inner label text
+            const activeLabels = btnElement.querySelectorAll('span');
+            if(activeLabels.length > 0) {
+                 activeLabels[0].classList.remove('text-gray-500');
+                 activeLabels[0].classList.add('text-[#108354]');
+            }
+        }
+
+        function handleCustomAmountChange(inputElement) {
+            selectedAmount = null;
+            // Reset sibling buttons
+            const container = inputElement.parentElement.previousElementSibling;
+            if(container) {
+                const buttons = container.querySelectorAll('.amount-btn');
+                buttons.forEach(btn => {
+                    btn.classList.remove('border-[#108354]', 'bg-green-50', 'ring-1', 'ring-[#108354]');
+                    btn.classList.add('border-gray-200', 'bg-white');
+                    
+                    const labels = btn.querySelectorAll('span');
+                    if(labels.length > 0) {
+                         labels[0].classList.remove('text-[#108354]');
+                         labels[0].classList.add('text-gray-500');
+                    }
+                });
+            }
+        }
+        
+        // Select default amount (50 SAR) on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const defaultBtn = document.getElementById('default-amount-btn');
+            if(defaultBtn) {
+                handleAmountClick(50, defaultBtn);
+            }
+        });
+    </script>
+</body>
+</html>
