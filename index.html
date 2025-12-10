@@ -156,17 +156,18 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 transition-all duration-300">
                     
                     <!-- Top Toggle: Gift Checkbox -->
-                    <div class="flex items-center justify-end gap-3 mb-6">
-                        <div class="flex items-center gap-2 text-gray-700 text-sm cursor-pointer select-none" onclick="toggleGiftMode()">
-                            <label for="gift" class="cursor-pointer font-bold text-[#108354] text-sm md:text-base">تبرع عن أهلك وأصدقائك وشاركهم الأجر</label>
-                            <i data-lucide="gift" class="text-[#108354] w-[20px] stroke-[1.5]"></i>
-                        </div>
-                        <div class="relative flex items-center checkbox-wrapper">
-                            <input type="checkbox" id="gift" onchange="toggleGiftMode()" class="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-gray-300 checked:bg-[#108354] checked:border-transparent transition-all" />
-                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 pointer-events-none transition-opacity">
-                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <div class="flex items-center justify-between mb-6 cursor-pointer select-none group" onclick="toggleGiftMode()">
+                        <div class="flex items-center gap-3">
+                             <!-- Checkbox -->
+                            <div class="relative w-6 h-6 flex items-center justify-center">
+                                <input type="checkbox" id="gift" class="peer appearance-none w-6 h-6 border-2 border-gray-300 rounded-[4px] bg-white checked:bg-[#108354] checked:border-[#108354] transition-all cursor-pointer" />
+                                <i data-lucide="check" class="absolute text-white w-4 h-4 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></i>
                             </div>
+                            <!-- Label -->
+                            <label for="gift" id="gift-label" class="cursor-pointer font-bold text-gray-900 text-base pointer-events-none transition-colors duration-200">تبرع عن أهلك أو أصدقائك وشاركهم الأجر</label>
                         </div>
+                        <!-- Icon -->
+                        <i data-lucide="gift" class="text-gray-400 w-6 h-6 stroke-[1.5]"></i>
                     </div>
 
                     <!-- STANDARD VIEW -->
@@ -394,18 +395,29 @@
         // Toggle Gift View
         function toggleGiftMode() {
             const checkbox = document.getElementById('gift');
+            const label = document.getElementById('gift-label');
             const standardView = document.getElementById('standard-view');
             const giftView = document.getElementById('gift-view');
             
-            // Sync click if text was clicked
+            // Sync click if text was clicked (prevent double toggle if checkbox itself is clicked)
             if(event.target.tagName !== 'INPUT') {
                  checkbox.checked = !checkbox.checked;
             }
 
             if(checkbox.checked) {
+                // Enabled state styling
+                label.classList.remove('text-gray-900');
+                label.classList.add('text-[#108354]');
+                
+                // Switch Views
                 standardView.classList.add('hidden');
                 giftView.classList.remove('hidden');
             } else {
+                // Disabled state styling
+                label.classList.remove('text-[#108354]');
+                label.classList.add('text-gray-900');
+
+                // Switch Views
                 standardView.classList.remove('hidden');
                 giftView.classList.add('hidden');
             }
@@ -436,8 +448,6 @@
             });
 
             // Set active style
-            // Note: Different active style for inside the grey card vs white background if needed, 
-            // but usually green border is standard.
             btnElement.className = `amount-btn py-2 rounded-lg border border-[#108354] bg-green-50 text-[#108354] text-sm font-bold transition-all ${btnElement.closest('#gift-view') ? 'bg-white' : ''}`;
         }
 
